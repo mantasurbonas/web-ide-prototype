@@ -378,8 +378,35 @@ function changeEditorLanguage() {
 
 function insertTemplate() {
     currentLanguageId = parseInt($selectLanguage.val());
-    sourceEditor.setValue(sources[currentLanguageId]);
+    sourceEditor.setValue("");
     changeEditorLanguage();
+}
+
+function typeLessonCode(lessonCode){
+	var arr = lessonCode.match(/[\s\S]{1,3}/g);
+	
+	typeText(sourceEditor, arr);
+}
+
+function typeText(editor, textArray){
+	if (!textArray || textArray.length <= 0)
+		return;
+	
+	addText(editor, textArray.shift());
+	setTimeout(function(){ typeText(editor, textArray); }, 40);
+}
+
+function addText(editor, text){
+	var line = editor.getPosition();
+	var range = {
+        startLineNumber: line.lineNumber, 
+        startColumn: line.column,
+        endLineNumber: line.lineNumber, 
+        endColumn: line.column
+    };
+	var id = { major: 1, minor: 1 };             
+	var op = {identifier: id, range: range, text: text, forceMoveMarkers: true};
+	editor.executeEdits("my-source", [op]);
 }
 
 function loadRandomLanguage() {
@@ -392,7 +419,6 @@ $(window).resize(function() {
 });
 
 $(document).ready(function () {
-    console.log("Hey, Judge0 IDE is open-sourced: https://github.com/judge0/ide. Have fun!");
 
     $selectLanguage = $("#select-language");
     $selectLanguage.change(function (e) {
@@ -474,6 +500,24 @@ $(document).ready(function () {
                 currentLanguageId = parseInt($selectLanguage.val());
                 isEditorDirty = sourceEditor.getValue() != sources[currentLanguageId];
             });
+			
+			sourceEditor.addCommand(monaco.KeyCode.F6, function() {
+				typeLessonCode(""
++"žodžioNumeris = paklauskSkaičiaus (\"Įvesk skaičių nuo 0 iki 5: \")\n"
++"\n"
++"jeigu žodžioNumeris  == 0:\n"
++"   rašyk(žodis0)\n"
++"ojeigu žodžioNumeris == 1:\n"
++"   rašyk(žodis1)\n"
++"ojeigu žodžioNumeris == 2:\n"
++"   rašyk(žodis2)\n"
++"ojeigu žodžioNumeris == 3:\n"
++"   rašyk(žodis3)\n"
++"ojeigu žodžioNumeris == 4:\n"
++"   rašyk(žodis4)\n"
++"ojeigu žodžioNumeris == 5:\n"
++"   rašyk(žodis5)");
+			});
         });
 
         layout.registerComponent("stdin", function (container, state) {
@@ -640,7 +684,7 @@ begin\n\
     writeln ('hello, world')\n\
 end.\n";
 
-var pythonSource = "print(\"hello, world\")\n";
+var pythonSource = "rašyk(\"Labas!\")\n";
 
 var rubySource = "puts \"hello, world\"\n";
 
@@ -744,10 +788,10 @@ var fileNames = {
     31: "main.ml",
     32: "file.m",
     33: "main.pas",
-    34: "main.py",
-    35: "main.py",
-    36: "main.py",
-    37: "main.py",
+    34: "pamoka.py",
+    35: "pamoka.py",
+    36: "pamoka.py",
+    37: "pamoka.py",
     38: "main.rb",
     39: "main.rb",
     40: "main.rb",

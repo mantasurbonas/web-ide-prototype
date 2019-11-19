@@ -73,6 +73,7 @@ export var language = {
         'or',
         'pass',
         'print',
+		'rašyk',
         'raise',
         'return',
         'self',
